@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  php:
+    build:
+      dockerfile: ./docker/dev/Dockerfile
+      context: .
+    ports:
+      - '8080:8080'
+    working_dir: /var/task
+    volumes:
+      - ./config:/var/task/config
+      - ./src:/var/task/src
+      - ./vendor:/var/task/vendor
+      - ./composer.json:/var/task/composer.json
+    environment:
+      COMPOSER_AUTH:
+      PORT: 8080
+      #      PHP_XDEBUG_MODE: 'off'
+      PHP_XDEBUG_MODE: 'debug'
+      PHP_XDEBUG_REMOTE_CONNECT_BACK: 0
+      PHP_XDEBUG_REMOTE_HOST: host.docker.internal
+      PHP_XDEBUG_REMOTE_PORT: 9003
+      PHP_XDEBUG_IDEKEY: PSTORM
+      PHP_IDE_CONFIG: serverName=swoole
+      PHP_XDEBUG_START_WITH_REQUEST: 0
+      XDEBUG_SESSION: 1
+
+      S3_BUCKET:
+      S3_ENDPOINT:
+      S3_CREDENTIALS_KEY:
+      S3_CREDENTIALS_SECRET:
+
+    entrypoint:
+      - sh
+    command:
+      #      -c "sleep 9999"
+      -c "APP_LOG_NAME=app  php /var/task/src/run.php"
+    networks:
+      - local-net
+
+networks:
+  local-net:
+    name: local-net
+    driver: bridge
+    ipam:
+      driver: default

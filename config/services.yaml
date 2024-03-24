@@ -1,0 +1,83 @@
+parameters:
+  env(SERVER_HOST): '0.0.0.0'
+  env(PORT): '9501'
+  env(SERVER_REACTOR_NUM): '1'
+  env(SERVER_WORKER_NUM): '2'
+  env(SERVER_DISPATCH_MODE): '1'
+  env(SERVER_MAX_REQUEST): '0'
+  env(SERVER_BACKLOG): '512'
+
+  server.host: '%env(SERVER_HOST)%'
+  server.port: '%env(int:PORT)%'
+
+  server.reactor_num: '%env(int:SERVER_REACTOR_NUM)%'
+  server.worker_num: '%env(int:SERVER_WORKER_NUM)%'
+  server.dispatch_mode: '%env(int:SERVER_DISPATCH_MODE)%'
+  server.max_request: '%env(int:SERVER_MAX_REQUEST)%'
+  server.backlog: '%env(int:SERVER_BACKLOG)%'
+
+  env(SERVER_LOG_LEVEL): '5' #!php/const SWOOLE_LOG_ERROR
+  server.log_level: '%env(SERVER_LOG_LEVEL)%'
+  server.mode: !php/const SWOOLE_BASE
+#  server.mode: !php/const SWOOLE_PROCESS
+
+
+  env(S3_BUCKET): 'bucket'
+  env(S3_VERSION): 'latest'
+  env(S3_REGION): 'us-east-1'
+  env(S3_ENDPOINT): 'http://minio:9000'
+  env(S3_USE_PATH_STYLE_ENDPOINT): 'true'
+  env(S3_CREDENTIALS_KEY): 'minioadmin'
+  env(S3_CREDENTIALS_SECRET): 'minioadmin'
+
+  s3.bucket: '%env(S3_BUCKET)%'
+  s3.version: '%env(S3_VERSION)%'
+  s3.region: '%env(S3_REGION)%'
+  s3.endpoint: '%env(S3_ENDPOINT)%'
+  s3.use_path_style_endpoint: '%env(bool:S3_USE_PATH_STYLE_ENDPOINT)%'
+  s3.credentials_key: '%env(S3_CREDENTIALS_KEY)%'
+  s3.credentials_secret: '%env(S3_CREDENTIALS_SECRET)%'
+
+
+services:
+  _defaults:
+    public: true
+
+  client.s3:
+    class: Aws\S3\S3Client
+    arguments:
+      - { version: '%s3.version%',
+          region: '%s3.region%',
+          endpoint: '%s3.endpoint%',
+          use_path_style_endpoint: '%s3.use_path_style_endpoint%',
+          credentials: { key: '%s3.credentials_key%',
+                         secret: '%s3.credentials_secret%', }, }
+
+
+  server:
+    public: true
+    class: Swoole\Http\Server
+    arguments:
+      - '%server.host%'
+      - '%server.port%'
+      - '%server.mode%'
+    calls:
+      - [ set, [ # @see \Swoole\Constant
+        {
+          "debug_mode": 1,
+          #          "enable_signalfd": 1,
+          "enable_coroutine": 1,
+
+          "daemonize": 0,
+          "reactor_num": '%server.reactor_num%',
+
+          "worker_num": '%server.worker_num%',
+          "dispatch_mode": '%server.dispatch_mode%',
+          "max_request": '%server.max_request%',
+          "backlog": '%server.backlog%',
+
+          "log_level": '%server.log_level%',
+
+          "task_worker_num": 0,
+        }
+      ] ]

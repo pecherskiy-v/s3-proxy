@@ -1,0 +1,37 @@
+{
+  "name": "pecherskiy-v/s3proxy",
+  "description": "",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Valeriy.Pecherskiy",
+      "email": "pecherskiy.v@gmail.com"
+    }
+  ],
+  "require-dev": {
+    "swoole/ide-helper": "~5.0.0",
+    "phpunit/phpunit": "10.1.2",
+    "roave/security-advisories": "dev-latest"
+  },
+  "require": {
+    "ext-json": "*",
+    "ext-redis": "*",
+    "ext-swoole": "*",
+    "aws/aws-sdk-php": "^3.234.0",
+    "nesbot/carbon": "^2.66.0",
+    "guzzlehttp/guzzle": "^7.6.1",
+    "symfony/config": "^v6.3.0",
+    "symfony/dependency-injection": "^v6.3.0",
+    "symfony/dotenv": "^v6.3.0",
+    "symfony/yaml": "^v6.3.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src"
+    },
+    "classmap": [
+      "./"
+    ]
+  }
+}
