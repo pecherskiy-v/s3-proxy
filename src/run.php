@@ -65,9 +65,12 @@ try {
             $s3Client = $containerBuilder->get('client.s3');
             $bucket = $containerBuilder->getParameter('s3.bucket');
 
+            $fullPathKey = $containerBuilder->getParameter('s3.fullPathKey');
             // get file name
-            $pathArray = explode('/', $request->server['path_info']);
-            if ($fileName = end($pathArray)) {
+            print_r($request->server['path_info']);
+            $pathArray = explode('/', ltrim($request->server['path_info'], '/'));
+            unset($pathArray[0]);
+            if ($fileName = $fullPathKey ? implode('/', $pathArray) : end($pathArray)) {
                 // Read contents
                 $file = $s3Client->getObject([
                     'Bucket' => $bucket,

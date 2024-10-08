@@ -21,6 +21,8 @@ parameters:
   server.mode: !php/const SWOOLE_BASE
 #  server.mode: !php/const SWOOLE_PROCESS
 
+  env(S3_FULL_PATH_KEY): 'false'
+  s3.fullPathKey: '%env(bool:S3_FULL_PATH_KEY)%'
 
   env(S3_BUCKET): 'bucket'
   env(S3_VERSION): 'latest'
